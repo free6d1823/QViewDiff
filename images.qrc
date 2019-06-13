@@ -1,0 +1,29 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/about.png</file>
+        <file>images/exit.png</file>
+        <file>images/open.png</file>
+        <file>images/pbegin_dw.png</file>
+        <file>images/pbegin_off.png</file>
+        <file>images/pbegin_on.png</file>
+        <file>images/pfast_dw.png</file>
+        <file>images/pfast_on.png</file>
+        <file>images/pfast_off.png</file>
+        <file>images/ppause_dw.png</file>
+        <file>images/ppause_off.png</file>
+        <file>images/ppause_on.png</file>
+        <file>images/pplay_dw.png</file>
+        <file>images/pplay_off.png</file>
+        <file>images/pplay_on.png</file>
+        <file>images/pslow_dw.png</file>
+        <file>images/pslow_off.png</file>
+        <file>images/pslow_on.png</file>
+        <file>images/save.png</file>
+        <file>images/settings.png</file>
+        <file>images/zoomin.png</file>
+        <file>images/zoomout.png</file>
+        <file>images/pend_dw.png</file>
+        <file>images/pend_off.png</file>
+        <file>images/pend_on.png</file>
+    </qresource>
+</RCC>
