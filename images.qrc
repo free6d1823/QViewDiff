@@ -25,5 +25,9 @@
         <file>images/pend_dw.png</file>
         <file>images/pend_off.png</file>
         <file>images/pend_on.png</file>
+        <file>images/normalsize.png</file>
+        <file>images/fittowindow.png</file>
+        <file>images/ruler.png</file>
+        <file>images/opent.png</file>
     </qresource>
 </RCC>
