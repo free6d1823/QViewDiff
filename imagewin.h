@@ -106,10 +106,10 @@ public:
     void scrollContentsBy(int dx, int dy);
     void mouseMoveEvent(QMouseEvent* event);
 
-    void setImage(const QImage &newImage);
+    void setImage(QImage* pNewImage);
     void adjustSize( );
     void scaleImage(double factor);
-    QImage* getImage(){ return &mImage;}
+    QImage* getImage(){ return mpImage;}
     void showRulers(bool bShow);
     bool isRulersShown();
 protected:
@@ -119,7 +119,7 @@ private:
     QDRuler* mVertRuler;
     QWidget* mRulerCorner;
 
-    QImage mImage;
+    QImage* mpImage;
     QLabel *mImageLabel;
 };
 

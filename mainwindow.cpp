@@ -194,19 +194,18 @@ void MainWindow::updateActions()
 
 }
 
-void MainWindow::setImage(const QImage &newImage)
+void MainWindow::setImage(QImage* pNewImage)
 {
-    int width = newImage.width();
+    int width = pNewImage->width();
     sMaxZoomIndex = MAX_ZOOM_INDEX;
     //limits maximum pixels to 25K
 
     while( width * sZoomFactor[sMaxZoomIndex] > 25000) {
         sMaxZoomIndex --;
     }
-    sCurZoomIndex = DEFAULT_ZOOM_INDEX;
 
     mZoomFactor = sZoomFactor[sCurZoomIndex];
-    mImageView->setImage(newImage);
+    mImageView->setImage(pNewImage);
     mImageView->scaleImage(mZoomFactor);
 
     //updateActions();
@@ -302,6 +301,8 @@ void MainWindow::onFileOpenSource()
             bOK = loadFile(filename, mSourceVideo);
 
         if (bOK ) {
+            sCurZoomIndex = DEFAULT_ZOOM_INDEX;
+            mImageView->setImage(NULL);//buffer is re-allocated, free the image
             if(readCurrentFrame())
             {
                 QString file1 = QDir::toNativeSeparators(filename);
@@ -504,9 +505,23 @@ bool MainWindow::readCurrentFrame()
     if (mSourceVideo.curFrame < 0 ||  mSourceVideo.curFrame >= mSourceVideo.totalFrames) {
         return false;
     }
-    long offset = mSourceVideo.offset + mSourceVideo.bytesPerframe* mSourceVideo.curFrame;
+    long offset = (long)mSourceVideo.offset + (long)mSourceVideo.bytesPerframe* (long)mSourceVideo.curFrame;
     if(0 != fseek(mSourceVideo.fd, offset, SEEK_SET ))
             return false;
+    if(mSourceVideo.bIsY4M){
+        char line[256];
+        //next line, search FRAME
+        if(fgets(line, sizeof(line), mSourceVideo.fd) != NULL) {
+            int n = strlen(line);
+            if (n != 6){
+                QString message = tr("line =  %1")
+                    .arg(line);
+                statusBar()->showMessage(message);
+
+            }
+        }
+
+    }
     if ( fread((char* )mSourceVideo.yuvBuffer, 1, mSourceVideo.bytesPerframe, mSourceVideo.fd) >0){
         mSourceVideo.convertFunc((unsigned char*)mSourceVideo.yuvBuffer + mSourceVideo.frameHeader,
                 mSourceVideo.width, mSourceVideo.width, mSourceVideo.height,
@@ -515,7 +530,8 @@ bool MainWindow::readCurrentFrame()
         return false;
     }
     QImage* newImage = mImageView->getImage();
-    if(newImage->isNull()) {
+    if(!newImage) {
+
             newImage = new QImage((unsigned char*)mSourceVideo.rgbBuffer,
                 mSourceVideo.width, mSourceVideo.height, QImage::Format_RGBA8888);
     } else if(newImage->width()!= mSourceVideo.width || newImage->height() != mSourceVideo.height ) {
@@ -526,7 +542,7 @@ bool MainWindow::readCurrentFrame()
     }
 
     if(newImage) {
-        setImage(*newImage);
+        setImage(newImage);
 
     }
     return true;
@@ -564,7 +580,7 @@ void MainWindow::onControlNext()
     }
     readCurrentFrame();
     if(mIsPlaying)
-       mpTimer->singleShot((int) (10000.0f/mSourceVideo.fps), this, SLOT(onControlNext()));
+       mpTimer->singleShot((int) (1000.0f/mSourceVideo.fps), this, SLOT(onControlNext()));
     if(mSourceVideo.curFrame == mSourceVideo.totalFrames-1) {
         if (mpTimer) {
             mpTimer->stop();

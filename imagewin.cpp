@@ -154,7 +154,7 @@ void QDRuler::drawMousePosTick(QPainter* painter)
   }
 }
 /*******************************************/
-ImageWin::ImageWin(QWidget *parent) : QScrollArea(parent), mImage(0),
+ImageWin::ImageWin(QWidget *parent) : QScrollArea(parent), mpImage(NULL),
     mImageLabel(new QLabel)
 {
 
@@ -190,7 +190,8 @@ ImageWin::ImageWin(QWidget *parent) : QScrollArea(parent), mImage(0),
 
 ImageWin::~ImageWin()
 {
-
+    if(mpImage)
+        delete mpImage;
 }
 void ImageWin::showRulers(bool bShow)
 {
@@ -222,10 +223,17 @@ void ImageWin::scrollContentsBy(int dx, int dy)
     mVertRuler->setOrigin(mVertRuler->origin()+dy);
 }
 
-void ImageWin::setImage(const QImage &newImage)
+void ImageWin::setImage(QImage* pNewImage)
 {
-    mImage = newImage;
-    mImageLabel->setPixmap(QPixmap::fromImage(mImage));
+    if(mpImage && mpImage != pNewImage)
+        delete mpImage;
+    mpImage = pNewImage;
+    if(!pNewImage){
+        //set pNewImage NULL to clear image
+        return;
+    }
+
+    mImageLabel->setPixmap(QPixmap::fromImage(*mpImage));
     setVisible(true);
 }
 void ImageWin::adjustSize( )

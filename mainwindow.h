@@ -47,7 +47,7 @@ private:
     void createUi();
     void updateActions();
     bool saveFile(const QString &fileName);
-    void setImage(const QImage &newImage);
+    void setImage(QImage* pNewImage);
     void scaleImage(int incIndex);
     void adjustScrollBar(QScrollBar *scrollBar, double factor);
     bool readCurrentFrame();
